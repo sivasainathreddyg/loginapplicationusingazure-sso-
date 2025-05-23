@@ -1,0 +1,17 @@
+<mvc:View controllerName="loginappusingsso.controller.View1"
+    xmlns:mvc="sap.ui.core.mvc"
+    xmlns="sap.m">
+    <Page id="page" title="{i18n>title}">
+    <content>
+        <VBox>
+            <Text text="Hello, welcome to your first SAP UI5 app!" />
+            <Button
+                text="Click Me"
+                press="onPressButton"
+                type="Emphasized"
+                
+            />
+            </VBox>
+        </content>
+    </Page>
+</mvc:View>

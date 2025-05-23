@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>SAPUI5 MSAL Auth</title>
+
+    <style>
+        html,
+        body,
+        #appContent {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <!-- SAPUI5 BOOTSTRAP -->
+    <script id="sap-ui-bootstrap" src="resources/sap-ui-core.js" data-sap-ui-theme="sap_horizon"
+        data-sap-ui-resourceroots='{"loginappusingsso": "./"}' data-sap-ui-compatVersion="edge" data-sap-ui-async="true"
+        data-sap-ui-frameOptions="trusted">
+        </script>
+
+    <!-- MSAL Script -->
+    <script src="https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.39.0/lib/msal-browser.min.js"></script>
+
+    <script>
+        const msalConfig = {
+            auth: {
+                clientId: "54b79a40-316e-48d4-9a8c-fb75df00aae8",
+                authority: "https://login.microsoftonline.com/64d41f76-8ae4-44c7-a8ee-b9c50e07150b",
+                redirectUri: "https://sbp-enf.launchpad.cfapps.us10.hana.ondemand.com/3fd579c7-f57f-460c-9e44-92e44cc569f1.loginappusingsso.loginappusingsso-0.0.1"
+            },
+            cache: {
+                cacheLocation: "sessionStorage",
+                storeAuthStateInCookie: true
+            }
+        };
+
+        const msalInstance = new msal.PublicClientApplication(msalConfig);
+
+        function initAuth() {
+            msalInstance.handleRedirectPromise()
+                .then((response) => {
+                    let account = null;
+
+                    if (response && response.account) {
+                        account = response.account;
+                        msalInstance.setActiveAccount(account);
+                    } else {
+                        const accounts = msalInstance.getAllAccounts();
+                        if (accounts.length > 0) {
+                            account = accounts[0];
+                            msalInstance.setActiveAccount(account);
+                        }
+                    }
+
+                    if (account) {
+                        console.log("✅ Logged in as:", account.username);
+                        window.userEmail = account.username;
+
+                        // Unhide content
+                        document.getElementById("appContent").style.display = "block";
+
+                        // Initialize SAPUI5 Component
+                        sap.ui.getCore().attachInit(function () {
+                            sap.ui.component({
+                                name: "loginappusingsso",
+                                id: "container",
+                                async: true,
+                                settings: {
+                                    id: "loginappusingsso"
+                                }
+                            }).then(function (oComponent) {
+                                new sap.ui.core.ComponentContainer({
+                                    component: oComponent,
+                                    height: "100%"
+                                }).placeAt("appContent");
+                            });
+                        });
+                    } else {
+                        const status = sessionStorage.getItem("msal.interaction.status");
+                        if (status !== "interaction_in_progress") {
+                            console.log(" Redirecting to login...");
+                            msalInstance.loginRedirect({ scopes: ["user.read"] });
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error(" MSAL Error:", error);
+                    alert("Login failed: " + (error.message || error));
+                });
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            initAuth();
+        });
+    </script>
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+    <div id="appContent" style="display: none;"></div>
+</body>
+
+</html>
