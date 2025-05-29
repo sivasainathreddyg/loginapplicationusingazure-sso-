@@ -58,7 +58,7 @@
                     }
 
                     // if (account) {
-                    //     console.log(" Logged in as:", account.username);
+                    //     console.log("✅ Logged in as:", account.username);
                     //     window.userEmail = account.username;
 
                     //     // Unhide content
@@ -82,13 +82,13 @@
                     //     });
                     // } 
                     if (account) {
-                        console.log(" Logged in as:", account.username);
+                        console.log("✅ Logged in as:", account.username);
                         window.userEmail = account.username;
                         document.getElementById("appContent").style.display = "block";
 
                         // Wait for SAPUI5 to be ready
                         sap.ui.getCore().attachInit(function () {
-                            //  SAPUI5 is now ready — safe to use JSONModel
+                            // ✅ SAPUI5 is now ready — safe to use JSONModel
                             var oAccountModel = new sap.ui.model.json.JSONModel(account);
                             sap.ui.getCore().setModel(oAccountModel, "account");
 

@@ -1,0 +1,2 @@
+sap.ui.define(["sap/ui/core/mvc/Controller"],e=>{"use strict";return e.extend("loginappusingsso.controller.View1",{onInit(){var e=1+3;console.log(e);var o=sap.ui.getCore().getModel("account");this.getView().setModel(o,"account")}})});
+//# sourceMappingURL=View1.controller.js.map
